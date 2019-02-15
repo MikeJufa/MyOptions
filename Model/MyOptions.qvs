@@ -22,12 +22,20 @@ SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;
 [trading_records]:
 LOAD
 	*
+	,if(Type='Vertical', TextBetween(Description,' ',' ', 3), TextBetween(Description,' ',' ', 4)) as Symbol
+;
+LOAD
+	*
 	,Year(InDate) as Year
 	,Month(InDate) as Month
 	,Date(MonthStart(InDate),'MMM-YY') as YearMonth
 	,Week(InDate) as Week
 	,WeekDay(InDate) as WeekDay
 	,Day(InDate) as Day
+	,Pick(wildMatch(Description,'*VERTICAL*','*IRON*'), 'Vertical', 'Iron Condor') as Type
+	,TextBetween(Description,'-',' ') as Qty
+	,SubField(Description, '@',2) as Price
+
 ;
 LOAD
 	*
