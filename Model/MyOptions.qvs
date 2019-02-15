@@ -22,5 +22,14 @@ SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;
 [trading_records]:
 LOAD
 	*
+	,Year(InDate) as Year
+	,Month(InDate) as Month
+	,Date(MonthStart(InDate),'MMM-YY') as YearMonth
+	,Week(InDate) as Week
+	,WeekDay(InDate) as WeekDay
+	,Day(InDate) as Day
+;
+LOAD
+	*
  FROM [lib://Data/trading_records.txt]
 (txt, codepage is 28591, embedded labels, delimiter is ',', msq);

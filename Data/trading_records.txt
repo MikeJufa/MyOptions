@@ -1,2 +1,2 @@
-Date, Symbol, Qty, Price,Status,PL
-2/13/2019, NFLX, 10, -0.83,Holding,<N/A>
+InDate, OutDate, Symbol, Spread, Description, Type, Range, Price, Qty
+2/13/2019, <N/A>, NFLX, Vertical, SOLD -10 VERTICAL NFLX 100 15 FEB 19 365/370 CALL @.86, SHORT CALL, 365/370, 0.86, 10
