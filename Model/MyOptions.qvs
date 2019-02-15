@@ -18,11 +18,17 @@ SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
 SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
 SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
 
-
 [trading_records]:
 LOAD
 	*
-	,if(Type='Vertical', TextBetween(Description,' ',' ', 3), TextBetween(Description,' ',' ', 4)) as Symbol
+	,if(Type='Iron Condor',(SubField(TempRange, '/',1) - SubField(TempRange, '/',3)),'<N/A>') as Diff
+	,if(Type='Iron Condor',num((SubField(TempRange, '/',1) - SubField(TempRange, '/',3))/Avg,'#,##0.00%'),'<N/A>') as Diff%
+;
+LOAD
+	*
+	,if(Type='Vertical', TextBetween(InDescription,' ',' ', 3), TextBetween(InDescription,' ',' ', 4)) as Symbol
+	,if(OutDate='<N/A>','Open','Closed') as Status
+	,if(Type='Iron Condor', TextBetween(InDescription,' ',' ', 10),'<N/A>') as TempRange
 ;
 LOAD
 	*
@@ -32,12 +38,15 @@ LOAD
 	,Week(InDate) as Week
 	,WeekDay(InDate) as WeekDay
 	,Day(InDate) as Day
-	,Pick(wildMatch(Description,'*VERTICAL*','*IRON*'), 'Vertical', 'Iron Condor') as Type
-	,TextBetween(Description,'-',' ') as Qty
-	,SubField(Description, '@',2) as Price
-
+	,Pick(wildMatch(InDescription,'*VERTICAL*','*IRON*'), 'Vertical', 'Iron Condor') as Type
+	,TextBetween(InDescription,'-',' ') as Qty
+	,SubField(InDescription, '@',2) as Price
 ;
 LOAD
 	*
  FROM [lib://Data/trading_records.txt]
-(txt, codepage is 28591, embedded labels, delimiter is ',', msq);
+(txt, codepage is 28591, embedded labels, delimiter is ',', msq)
+;
+
+DROP Fields TempRange
+;
