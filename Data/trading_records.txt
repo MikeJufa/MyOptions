@@ -1,0 +1,2 @@
+Date, Symbol, Qty, Price,Status,PL
+2/13/2019, NFLX, 10, -0.83,Holding,<N/A>
