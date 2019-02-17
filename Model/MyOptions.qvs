@@ -21,14 +21,15 @@ SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;
 [trading_records]:
 LOAD
 	*
-	,if(Type='Iron Condor',(SubField(TempRange, '/',1) - SubField(TempRange, '/',3)),'<N/A>') as Diff
-	,if(Type='Iron Condor',num((SubField(TempRange, '/',1) - SubField(TempRange, '/',3))/Avg,'#,##0.00%'),'<N/A>') as Diff%
+	,pick(match(Type, 'Vertical', 'Iron Condor'),floor((SubField(TempRange, '/',1) - Adj)),(SubField(TempRange, '/',1) - SubField(TempRange, '/',3))) as Diff
+	,pick(match(Type,'Vertical','Iron Condor'),num((SubField(TempRange, '/',1) - Adj)/Adj,'#,##0.00%'),num((SubField(TempRange, '/',1) - SubField(TempRange, '/',3))/Adj,'#,##0.00%')) as Diff%
 ;
 LOAD
 	*
 	,if(Type='Vertical', TextBetween(InDescription,' ',' ', 3), TextBetween(InDescription,' ',' ', 4)) as Symbol
 	,if(OutDate='<N/A>','Open','Closed') as Status
-	,if(Type='Iron Condor', TextBetween(InDescription,' ',' ', 10),'<N/A>') as TempRange
+	,pick(match(Type,'Vertical','Iron Condor'),TextBetween(InDescription,' ',' ', 8),TextBetween(InDescription,' ',' ', 10)) as TempRange
+	,if(OutPrice>InPrice, 1, 0) as Bad_Flag
 ;
 LOAD
 	*
@@ -40,7 +41,8 @@ LOAD
 	,Day(InDate) as Day
 	,Pick(wildMatch(InDescription,'*VERTICAL*','*IRON*'), 'Vertical', 'Iron Condor') as Type
 	,TextBetween(InDescription,'-',' ') as Qty
-	,SubField(InDescription, '@',2) as Price
+	,SubField(InDescription, '@',2) as InPrice
+	,if(OutPrice=0.01, 1, 0) as Good_Flag	
 ;
 LOAD
 	*
