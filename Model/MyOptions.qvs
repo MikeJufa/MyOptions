@@ -18,24 +18,25 @@ SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
 SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
 SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
 
+
 [trading_records]:
 LOAD
 	*
 	,1 as TradeCounter
-	,pick(match(Type, 'Vertical', 'Iron Condor'),floor((SubField(TempRange, '/',1) - Adj)),(SubField(TempRange, '/',1) - SubField(TempRange, '/',3))) as Diff
-	,pick(match(Type,'Vertical','Iron Condor'),num((SubField(TempRange, '/',1) - Adj)/Adj,'#,##0.00%'),num((SubField(TempRange, '/',1) - SubField(TempRange, '/',3))/Adj,'#,##0.00%')) as Diff%
+	,pick(match(Type, 'Vertical', 'Iron Condor'),floor((SubField(TempRange, '/',1) - Close)),(SubField(TempRange, '/',1) - SubField(TempRange, '/',3))) as Diff
+	,pick(match(Type,'Vertical','Iron Condor'),num((SubField(TempRange, '/',1) - Close)/Close,'#,##0.00%'),num((SubField(TempRange, '/',1) - SubField(TempRange, '/',3))/Close,'#,##0.00%')) as Diff%
 ;
 LOAD
 	*
 	,if(Type='Vertical', TextBetween(InDescription,' ',' ', 3), TextBetween(InDescription,' ',' ', 4)) as Symbol
-	,if(OutDate='<N/A>','Open','Closed') as Status
+	,if(OutDate='<N/A>','Close','Closed') as Status
 	,pick(match(Type,'Vertical','Iron Condor'),TextBetween(InDescription2,' ',' ', 8),TextBetween(InDescription2,' ',' ', 9)) as TempRange
-	,if(OutPrice>InPrice, 1, 0) as Bad_Flag
+	,if(OutPrice>InPrice, 1, 0) as [Bad Flag]
 ;
 LOAD
 	*
 	,replace(InDescription,' (Weeklys)','') as InDescription2
-	,(OutDate-InDate)+1 as DateDiff
+	,(OutDate-InDate)+1 as [Date Decay]
 ;
 LOAD
 	*
@@ -48,7 +49,7 @@ LOAD
 	,Pick(wildMatch(InDescription,'*VERTICAL*','*IRON*'), 'Vertical', 'Iron Condor') as Type
 	,TextBetween(InDescription,'-',' ') as Qty
 	,SubField(InDescription, '@',2) as InPrice
-	,if(OutPrice=0.01, 1, 0) as Good_Flag	
+	,if(OutPrice=0.01, 1, 0) as [Good Flag]	
  FROM [lib://Data/trading_records.txt]
 (txt, codepage is 28591, embedded labels, delimiter is ',', msq)
 ;
