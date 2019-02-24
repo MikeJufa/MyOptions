@@ -32,6 +32,7 @@ LOAD
 	,if(OutDate='<N/A>','Close','Closed') as Status
 	,pick(match(Type,'Vertical','Iron Condor'),TextBetween(InDescription2,' ',' ', 8),TextBetween(InDescription2,' ',' ', 9)) as TempRange
 	,if(OutPrice>InPrice, 1, 0) as [Bad Flag]
+	,Qty*(InPrice-OutPrice)*100 as PL
 ;
 LOAD
 	*
