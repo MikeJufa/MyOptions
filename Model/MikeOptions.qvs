@@ -19,7 +19,7 @@ SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
 SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
 
 
-[trading_records]:
+[trading_records_real_money]:
 LOAD
 	*
 	,1 as TradeCounter
@@ -51,7 +51,7 @@ LOAD
 	,TextBetween(InDescription,'-',' ') as Qty
 	,SubField(InDescription, '@',2) as InPrice
 	,if(OutPrice=0.01, 1, 0) as [Good Flag]
- FROM [lib://Data/trading_records.txt]
+ FROM [lib://Data/trading_records_real_money.txt]
 (txt, codepage is 28591, embedded labels, delimiter is ',', msq)
 ;
 

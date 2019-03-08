@@ -1,0 +1,2 @@
+InDate, OutDate, InDescription, Commission, OutPrice, Close
+3/6/2019, 3/7/2019, SOLD -10 VERTICAL NFLX 100 (Weeklys) 8 MAR 19 362.5/367.5 CALL @.92, -70, .12, 359.61
