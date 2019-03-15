@@ -33,6 +33,7 @@ LOAD
 LOAD
     *
     ,num([Adj Close]-peek([Adj Close],-1),'#,##0.00') as Change
+//where Year>2010
 ;
 LOAD
      Date
@@ -51,4 +52,5 @@ LOAD
     "Adj Close",
     Volume
 FROM [lib://Data/^IXIC.csv]
-(txt, codepage is 28591, embedded labels, delimiter is ',', msq);
+(txt, codepage is 28591, embedded labels, delimiter is ',', msq)
+;
