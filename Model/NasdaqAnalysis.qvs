@@ -33,7 +33,7 @@ LOAD
 LOAD
     *
     ,num([Adj Close]-peek([Adj Close],-1),'#,##0.00') as Change
-//where Year>2010
+where Year>=2000
 ;
 LOAD
      Date
